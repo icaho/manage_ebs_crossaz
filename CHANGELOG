@@ -1,0 +1,4 @@
+2015-09-13 Release 0.1.0
+- Initial version
+- Support for finding an EBS volume based on tag key & value and getting it attached to the current EC2 instance regardless of AZ.
+- Support for fallback to a snapshot with the same tag key & value in case of issues with the volume or volume's AZ is down.

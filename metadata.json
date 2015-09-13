@@ -1,0 +1,26 @@
+{
+  "name": "manage_ebs_crossaz",
+  "version": "0.1.0",
+  "author": "mhlias",
+  "summary": "A simple module to manage AWS EBS volumes across AZs",
+  "license": "Apache 2.0",
+  "source": "https://github.com/mhlias/manage_ebs_crossaz",
+  "description": "",
+  "project_page": "https://github.com/mhlias/manage_ebs_crossaz",
+  "issues_url": "https://github.com/mhlias/manage_ebs_crossaz/issues",
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 4.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    }
+  ]
+}

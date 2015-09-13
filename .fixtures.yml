@@ -1,0 +1,5 @@
+fixtures:
+  forge_modules:
+    stdlib: "puppetlabs/stdlib"
+  symlinks:
+    manage_ebs_crossaz: "#{source_dir}"
