@@ -34,7 +34,7 @@ fallback to using a snapshot identified the same way as the volume.
 ### Setup Requirements
 
 The EC2 instance that will use the module need to have the following actions allowed in its IAM role:
-
+```
 "Action": [
     "ec2:AttachVolume",
     "ec2:CreateSnapshot",
@@ -50,6 +50,7 @@ The EC2 instance that will use the module need to have the following actions all
     "ec2:AttachVolume",
     "ec2:DescribeInstanceStatus"
 ],
+```
 
 
 ### Beginning with manage_ebs_crossaz
@@ -57,7 +58,7 @@ The EC2 instance that will use the module need to have the following actions all
 ## Usage
 
 Simple example:
-
+```
 class { 'manage_ebs_crossaz':
   region => 'eu-west-1',
   instance_id => $::ec2_instance_id,
@@ -65,7 +66,7 @@ class { 'manage_ebs_crossaz':
   tag_value => 'server_role',
   device => '/dev/xvdh',
 } 
-
+```
 ## Reference
 
 ## Limitations
