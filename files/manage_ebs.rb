@@ -35,7 +35,7 @@ def create_volume(az_id, volume_id, snap_id)
     else 
       
       snapshot = vol.create_snapshot({
-        description: "vidispine",
+        description: "ephemeral-snapshot",
       })
 
       snapshot.wait_until_completed
@@ -57,6 +57,16 @@ def create_volume(az_id, volume_id, snap_id)
 
       sleep 15
       
+      vol.create_tags({
+        tags: [
+        {
+          key: vol.tags[0]["key"],
+          value: vol.tags[0]["value"]+"-archived",
+        },
+        ],
+      })
+      snapshot.delete
+
       return new_vol.id
 
     end
@@ -112,6 +122,7 @@ def get_vol_for_az(az_id, tag_name, tag_val)
 
   if volumes.count > 0 then
     volumes.each { |vol| vol_id =  vol.id }
+    
     return create_volume(az_id, vol_id, false)
   else
     snapshots = ec2.snapshots({

@@ -48,7 +48,8 @@ The EC2 instance that will use the module need to have the following actions all
     "ec2:DescribeInstances",
     "ec2:CreateTags",
     "ec2:AttachVolume",
-    "ec2:DescribeInstanceStatus"
+    "ec2:DescribeInstanceStatus",
+    "ec2:DeleteSnapshot"
 ],
 
 

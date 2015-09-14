@@ -1,3 +1,8 @@
+2015-09-14 Release 0.2.0
+- Do some housekeeping my deleting the ephemeral snapshot after use.
+- Change the old EBS volume's tag to differentiate from the current one by adding "-archived" to the tag's value.
+
+
 2015-09-13 Release 0.1.0
 - Initial version
 - Support for finding an EBS volume based on tag key & value and getting it attached to the current EC2 instance regardless of AZ.
