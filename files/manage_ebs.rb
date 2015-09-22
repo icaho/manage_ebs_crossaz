@@ -106,11 +106,6 @@ def get_vol_for_az(az_id, tag_name, tag_val)
   volumes = ec2.volumes({
     filters: [
       {
-        name: 'tag-key',
-        values: [tag_name],
-        name:'tag-value',
-        values: [tag_val],
-        name: 'status',
         values: ['available'],
       }
     ],
@@ -121,22 +116,38 @@ def get_vol_for_az(az_id, tag_name, tag_val)
   snap_id = ''
 
   if volumes.count > 0 then
-    volumes.each { |vol| vol_id =  vol.id }
-    
+    volumes.each do |vol|
+      vol.tags.each do |tags|
+        if ( tags['key'] == tag_name ) && ( tags['value'] == tag_val )
+          vol_id = vol.id
+          break
+        end
+      end
+      break if vol_id != nil
+    end
+
     return create_volume(az_id, vol_id, false)
   else
     snapshots = ec2.snapshots({
       filters: [
-      {
-        name: 'tag-key',
-        values: [tag_name],
-        name:'tag-value',
-        values: [tag_val],
-      }
+      name: 'tag-key',
+      values: tag_name,
+      name: 'tag-value',
+      values: [tag_val],
       ],
     })
 
-    snapshots.each { |snap| snap_id = snap.id }
+    if snapshots.count > 0 then
+      snapshots.each do |snap|
+        snap.tags.each do |tags|
+          if ( tags['key'] == tag_name ) && ( tags['value'] == tag_val )
+            snap_id = snap.id
+            break
+          end
+        end
+        break if snap_id != nil
+      end
+    end
 
     return create_volume(az_id, false, snap_id)
 
