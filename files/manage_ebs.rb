@@ -106,6 +106,7 @@ def get_vol_for_az(az_id, tag_name, tag_val)
   volumes = ec2.volumes({
     filters: [
       {
+        name: 'status',
         values: ['available'],
       }
     ],
