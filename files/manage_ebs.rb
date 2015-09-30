@@ -113,8 +113,8 @@ def get_vol_for_az(az_id, tag_name, tag_val)
   })
 
 
-  vol_id  = ''
-  snap_id = ''
+  vol_id  = nil
+  snap_id = nil
 
   if volumes.count > 0 then
     volumes.each do |vol|
