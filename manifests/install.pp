@@ -21,6 +21,10 @@ class manage_ebs_crossaz::install {
     ensure => 'file',
     owner  => 'root',
     mode   => '0700',
+  }->
+  package { 'xfsprogs':
+    ensure   => installed,
+    provider => 'yum',
   }
   
 }

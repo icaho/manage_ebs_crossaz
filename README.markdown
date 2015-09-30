@@ -66,6 +66,8 @@ class { 'manage_ebs_crossaz':
   tag_key => 'role',
   tag_value => 'server_role',
   device => '/dev/xvdh',
+  mount_point => '/mnt',
+  handle_format => true,
 } 
 ```
 ## Reference
@@ -74,8 +76,8 @@ class { 'manage_ebs_crossaz':
 
 Currently only tested in CentOS 7 but possibly works with 6 too.
 
-The module only manages things all the way to the volume attachment on the instance.
-Volume filesystem and OS device mount need to be handled by the user.
+The module manages attachment of the volume, formatting if there is no filesystem present
+and mounting the volume to the specified mountpoint, which will be created if it doesn't exist.
 
 ## Development
 

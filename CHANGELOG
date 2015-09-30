@@ -1,3 +1,26 @@
+2015-09-30 Release v1.0.0
+
+NEW FEATURES
+- Added support for handling formatting of block device.
+- Added support for mounting the volume to a specified mountpoint.
+- Added support for creating the mount point.
+
+BREAKING CHANGES
+- Two new parameters added:
+  - mount_point (string)
+  - handle_format (bool)
+
+
+2015-09-30 Release v0.3.1 
+ 
+BUGFIXES:
+- Fixed an erroneous compare that caused issues with selection of volume
+
+2015-09-30 Release v0.3.0 
+
+BUGFIXES:
+- Fix typo.
+
 2015-09-14 Release 0.2.0
 - Do some housekeeping my deleting the ephemeral snapshot after use.
 - Change the old EBS volume's tag to differentiate from the current one by adding "-archived" to the tag's value.
