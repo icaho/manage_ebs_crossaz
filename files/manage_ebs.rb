@@ -55,7 +55,7 @@ def create_volume(az_id, volume_id, snap_id)
         tags: vol.tags,
       })
 
-      sleep 15
+      new_vol.wait_until(max_attempts:10, delay:5) {|nvol| nvol.state == 'available' }
       
       vol.create_tags({
         tags: [
@@ -89,7 +89,7 @@ def create_volume(az_id, volume_id, snap_id)
       tags: snap.tags,
     })  
 
-    sleep 15
+    new_vol.wait_until(max_attempts:10, delay:5) {|nvol| nvol.state == 'available' }
 
     return new_vol.id
 
@@ -164,6 +164,12 @@ def attach_volume(inst_id, vol_id, dev='/dev/xvdh')
     instance_id: inst_id,
     device: dev,
   })
+
+  vol.wait_until(max_attempts:20, delay:5) {|nvol| nvol.state == 'in-use' }
+  
+  while !system("file -s #{dev} | grep data > /dev/null")
+   sleep 2
+  end
 
 end
 
