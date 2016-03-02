@@ -24,7 +24,7 @@ az_id = resp.instance_statuses[0].availability_zone
 
 
 
-def create_volume(az_id, volume_id, snap_id)
+def create_volume(az_id, volume_id, snap_id, tag_name)
 
   if volume_id then
 
@@ -56,12 +56,19 @@ def create_volume(az_id, volume_id, snap_id)
       })
 
       new_vol.wait_until(max_attempts:10, delay:5) {|nvol| nvol.state == 'available' }
+      idx = 0
+      vol.tags.each_with_index do |tval, tidx|
+        if tval['key'] == tag_name then
+          idx = tidx
+          break
+        end
+      end
       
       vol.create_tags({
         tags: [
         {
-          key: vol.tags[0]["key"],
-          value: vol.tags[0]["value"]+"-archived",
+          key: vol.tags[idx]["key"],
+          value: vol.tags[idx]["value"]+"-archived",
         },
         ],
       })
@@ -127,7 +134,7 @@ def get_vol_for_az(az_id, tag_name, tag_val)
       break if vol_id != nil
     end
 
-    return create_volume(az_id, vol_id, false)
+    return create_volume(az_id, vol_id, false, tag_name)
   else
     snapshots = ec2.snapshots({
       filters: [
@@ -150,7 +157,7 @@ def get_vol_for_az(az_id, tag_name, tag_val)
       end
     end
 
-    return create_volume(az_id, false, snap_id)
+    return create_volume(az_id, false, snap_id, tag_name)
 
   end
 
