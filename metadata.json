@@ -1,6 +1,6 @@
 {
   "name": "manage_ebs_crossaz",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "author": "mhlias",
   "summary": "A simple module to manage AWS EBS volumes across AZs",
   "license": "Apache 2.0",
