@@ -51,6 +51,7 @@ class manage_ebs_crossaz (
   exec { 'manage_ebs':
     command => "/usr/bin/manage_ebs ${region} ${instance_id} ${tag_key} ${tag_value} ${device}",
     creates => $device,
+    timeout => 1200,
   }->
   exec { 'wait_until_ready':
     command  => "sleep 120",
