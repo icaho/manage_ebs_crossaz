@@ -24,7 +24,7 @@ az_id = resp.instance_statuses[0].availability_zone
 
 
 
-def create_volume(az_id, volume_id, snap_id, tag_name)
+def create_volume(az_id, volume_id, snap_id, tag_name, tag_val)
 
   if volume_id then
 
@@ -32,8 +32,8 @@ def create_volume(az_id, volume_id, snap_id, tag_name)
 
     if vol.availability_zone == az_id then
       return vol.id
-    else 
-      
+    else
+
       snapshot = vol.create_snapshot({
         description: "ephemeral-snapshot",
       })
@@ -48,7 +48,7 @@ def create_volume(az_id, volume_id, snap_id, tag_name)
         volume_type: 'gp2',
       })
 
-     
+
       new_vol = Aws::EC2::Volume.new(resp.volume_id)
 
       new_vol.create_tags({
@@ -63,7 +63,7 @@ def create_volume(az_id, volume_id, snap_id, tag_name)
           break
         end
       end
-      
+
       vol.create_tags({
         tags: [
         {
@@ -80,21 +80,42 @@ def create_volume(az_id, volume_id, snap_id, tag_name)
 
   else
 
-    snap = Aws::EC2::Snapshot.new(snap_id)
-
     client = Aws::EC2::Client.new
 
-    resp = client.create_volume({
-      availability_zone: az_id,
-      snapshot_id: snap.id,
-      volume_type: 'gp2',
-    })
+    unless snap_id.nil?
+      snap = Aws::EC2::Snapshot.new(snap_id)
+
+      resp = client.create_volume({
+        availability_zone: az_id,
+        snapshot_id: snap.id,
+        volume_type: 'gp2',
+      })
+
+      tags = snap.tags
+    else
+      resp = client.create_volume({
+        availability_zone: az_id,
+        size: 50,
+        volume_type: 'gp2',
+      })
+
+      tags = [
+        {
+          key: tag_name,
+          value: tag_val,
+        },
+        {
+          key: 'Name',
+          value: tag_val,
+        }
+      ]
+    end
 
     new_vol = Aws::EC2::Volume.new(resp.volume_id)
 
     new_vol.create_tags({
-      tags: snap.tags,
-    })  
+      tags: tags,
+    })
 
     new_vol.wait_until(max_attempts:10, delay:5) {|nvol| nvol.state == 'available' }
 
@@ -134,7 +155,7 @@ def get_vol_for_az(az_id, tag_name, tag_val)
       break if vol_id != nil
     end
 
-    return create_volume(az_id, vol_id, false, tag_name)
+    return create_volume(az_id, vol_id, false, tag_name, tag_val)
   else
     snapshots = ec2.snapshots({
       filters: [
@@ -157,7 +178,7 @@ def get_vol_for_az(az_id, tag_name, tag_val)
       end
     end
 
-    return create_volume(az_id, false, snap_id, tag_name)
+    return create_volume(az_id, false, snap_id, tag_name, tag_val)
 
   end
 
@@ -173,7 +194,7 @@ def attach_volume(inst_id, vol_id, dev='/dev/xvdh')
   })
 
   vol.wait_until(max_attempts:20, delay:5) {|nvol| nvol.state == 'in-use' }
-  
+
   while !system("file -s #{dev} | grep data > /dev/null")
    sleep 2
   end
