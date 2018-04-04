@@ -23,7 +23,6 @@ resp = client.describe_instance_status({
 az_id = resp.instance_statuses[0].availability_zone
 
 
-
 def create_volume(az_id, volume_id, snap_id, tag_name, tag_val)
 
   if volume_id then
@@ -125,8 +124,43 @@ def create_volume(az_id, volume_id, snap_id, tag_name, tag_val)
 
 end
 
+def cleanup_volume(az_id, tag_name, tag_val)
 
+  ec2 = Aws::EC2::Resource.new
+  volumes = ec2.volumes({
+    filters: [
+      {
+        name: 'tag-key',
+        values: [tag_name],
+      },
+      {
+        name: 'tag-value',
+        values: [tag_val],
+      }
+    ],
+  })
 
+  # first check we have an attached volume before removing the others
+  vol_attached = false
+  volumes.each do |vol|
+    if ( vol.availability_zone == az_id ) && ( vol.state == 'in-use' )
+      vol_attached = true
+    end
+    break if vol_attached
+  end
+
+  fail('ERROR - Volume not attached') unless vol_attached
+
+  volumes.each do |vol|
+    if ( vol.availability_zone != az_id ) && ( vol.state == 'available' )
+      cleanup_vol = Aws::EC2::Volume.new(vol.id)
+      cleanup_vol.delete({
+        dry_run: false,
+      })
+    end
+  end
+
+end
 
 def get_vol_for_az(az_id, tag_name, tag_val)
 
@@ -205,3 +239,5 @@ end
 volume_id = get_vol_for_az(az_id, tag_name, tag_val)
 
 attach_volume(instance_id, volume_id, device)
+
+cleanup_volume(az_id, tag_name, tag_val)
