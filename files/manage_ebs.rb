@@ -81,7 +81,7 @@ def create_volume(az_id, volume_id, snap_id, tag_name, tag_val)
 
     client = Aws::EC2::Client.new
 
-    unless snap_id.nil?
+    unless snap_id.nil? or ! snap_id
       snap = Aws::EC2::Snapshot.new(snap_id)
 
       resp = client.create_volume({
