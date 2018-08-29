@@ -6,7 +6,7 @@ define manage_ebs_crossaz::multi (
   $tag_value     = undef,
   $device        = undef,
   $mount_point   = undef,
-  $handle_format = false,
+  $handle_format = true,
 
 ) {
 
@@ -25,7 +25,7 @@ define manage_ebs_crossaz::multi (
 
   if $handle_format {
 
-    exec { 'format_ebs_device_${name}':
+    exec { "format_ebs_device_${name}":
       command  => "mkfs.xfs ${device}",
       provider => 'shell',
       path     => '/bin:/sbin:/usr/bin:/usr/sbin',
@@ -61,4 +61,3 @@ define manage_ebs_crossaz::multi (
   }
 
 }
-
